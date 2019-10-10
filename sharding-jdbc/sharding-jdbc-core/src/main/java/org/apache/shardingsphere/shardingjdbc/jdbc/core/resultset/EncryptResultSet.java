@@ -30,17 +30,10 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -368,7 +361,24 @@ public final class EncryptResultSet extends AbstractUnsupportedOperationResultSe
     public Object getObject(final String columnLabel) throws SQLException {
         return resultSet.getValue(getActualColumnLabel(columnLabel), Object.class);
     }
-    
+
+    @Override
+    public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
+        if (LocalDateTime.class.equals(type) || LocalDate.class.equals(type) || LocalTime.class.equals(type)) {
+            return (T) ResultSetUtil.convertValue(resultSet.getValue(columnIndex, Timestamp.class), type);
+        }
+        throw new SQLFeatureNotSupportedException("getObject with type");
+    }
+
+    @Override
+    public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
+        if (LocalDateTime.class.equals(type) || LocalDate.class.equals(type) || LocalTime.class.equals(type)) {
+            return (T) ResultSetUtil.convertValue(resultSet.getValue(columnLabel, Timestamp.class), type);
+        }
+        throw new SQLFeatureNotSupportedException("getObject with type");
+    }
+
+
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         return new EncryptResultSetMetaData(originalResultSet.getMetaData(), encryptRule, optimizedStatement, logicAndActualColumns);

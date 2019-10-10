@@ -27,6 +27,9 @@ import org.apache.shardingsphere.core.exception.ShardingException;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 /**
@@ -51,6 +54,17 @@ public final class ResultSetUtil {
         if (value.getClass() == convertType) {
             return value;
         }
+        if (LocalDateTime.class.equals(convertType)) {
+            return convertLocalDateTimeValue(value, convertType);
+        }
+        if (LocalDate.class.equals(convertType)) {
+            return convertLocalDateValue(value, convertType);
+        }
+        if (LocalTime.class.equals(convertType)) {
+            return convertLocalTimeValue(value, convertType);
+        }
+
+
         if (value instanceof Number) {
             return convertNumberValue(value, convertType);
         }
@@ -146,5 +160,20 @@ public final class ResultSetUtil {
             default:
                 return value;
         }
+    }
+
+    private static Object convertLocalDateTimeValue(final Object value, final Class<?> convertType) {
+        Timestamp timestamp = (Timestamp) value;
+        return timestamp.toLocalDateTime();
+    }
+
+    private static Object convertLocalDateValue(final Object value, final Class<?> convertType) {
+        Timestamp timestamp = (Timestamp) value;
+        return timestamp.toLocalDateTime().toLocalDate();
+    }
+
+    private static Object convertLocalTimeValue(final Object value, final Class<?> convertType) {
+        Timestamp timestamp = (Timestamp) value;
+        return timestamp.toLocalDateTime().toLocalTime();
     }
 }
