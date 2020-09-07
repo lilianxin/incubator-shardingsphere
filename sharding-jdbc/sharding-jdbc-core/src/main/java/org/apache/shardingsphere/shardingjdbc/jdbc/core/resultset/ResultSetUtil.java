@@ -30,6 +30,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -164,16 +165,16 @@ public final class ResultSetUtil {
 
     private static Object convertLocalDateTimeValue(final Object value, final Class<?> convertType) {
         Timestamp timestamp = (Timestamp) value;
-        return timestamp.toLocalDateTime();
+        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     private static Object convertLocalDateValue(final Object value, final Class<?> convertType) {
         Timestamp timestamp = (Timestamp) value;
-        return timestamp.toLocalDateTime().toLocalDate();
+        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private static Object convertLocalTimeValue(final Object value, final Class<?> convertType) {
         Timestamp timestamp = (Timestamp) value;
-        return timestamp.toLocalDateTime().toLocalTime();
+        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
     }
 }
